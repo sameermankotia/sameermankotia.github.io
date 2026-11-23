@@ -93,6 +93,16 @@ npm run build && npx vercel deploy --prebuilt   # or: netlify deploy --dir dist
 For GitHub Pages, set `base` in `astro.config.mjs` if it is not served from the
 domain root.
 
+## Naming
+
+The simulator is **FlexSiMArch** everywhere on this site. The internal system
+design document calls the same simulator **ProSim**, including in its script
+and report paths (`prosim_bhpol_run.py`, `build_prosim_cases.py`,
+`prosim_reports/`). They are one simulator under two names. The published name
+is FlexSiMArch (IEEE MCSoC 2025), so that is the one a reader can go and
+verify — don't reintroduce "ProSim" when updating `src/data/toolchain.ts` from
+that document.
+
 ## Conventions
 
 - **Square corners.** The only curve in the system is the node dot on a wire.

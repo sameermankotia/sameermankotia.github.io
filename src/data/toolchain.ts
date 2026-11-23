@@ -10,6 +10,14 @@
  *
  * Every box names the file that owns that stage, as the source spells it. No
  * step is in this list without one.
+ *
+ * NAMING. The system design document calls the simulator "ProSim" throughout,
+ * including in the script and report paths (prosim_bhpol_run.py,
+ * build_prosim_cases.py, prosim_reports/). ProSim and FlexSiMArch are the same
+ * simulator under two names. This site uses FlexSiMArch everywhere, because
+ * that is the name it was published under — IEEE MCSoC 2025 — and therefore
+ * the one a reader can go and check. Do not reintroduce "ProSim" here when
+ * updating from that document.
  */
 
 export type Step = {
