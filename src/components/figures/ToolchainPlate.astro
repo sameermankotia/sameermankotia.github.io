@@ -2,251 +2,193 @@
 /**
  * FIG. 1 — the plate.
  *
- * Two bands with the ELF binary between them, because that is the actual
- * architecture: the policy crosses from compile time to runtime *inside* the
- * artifact. Drawing it as a hand-off bar rather than another box in the row is
- * the one thing this figure has to get right.
+ * Three things this drawing has to get right, because they are the design:
  *
- * Two wires leave that bar. `.text` loads into memory, which every toolchain
- * does. `.policy_meta` and `.text_tag` route into the enforcement unit, which
- * is the contribution — so they are drawn as a junction feeding one input,
- * not as decoration along the bottom.
+ *   1. The symbol table is a hinge, not a stage. Both roads hang off it, so
+ *      it is drawn as the point the flow turns rather than another box in a
+ *      row.
+ *   2. There are two roads, and they are not equals. The compile road is what
+ *      an experiment runs; the JSON road exists so the trees are reviewable.
+ *      Drawn as two lanes, the compile one above.
+ *   3. The dashed link is load-bearing. Both roads label through one module,
+ *      which is the reason a label in an ELF and a label in a report cannot
+ *      disagree — so it is drawn once, in the middle, touching both.
  *
- * Presentational, and aria-hidden. Everything it says is said in the step
- * table beneath it, which is the keyboard and screen-reader route. Pointing at
- * a part here reads the same entry that pointing at its row does.
+ * Presentational and aria-hidden. Everything it says is said in the step
+ * table beneath it, which is the keyboard and screen-reader route.
  */
 ---
 
 <svg
-  viewBox="0 0 1200 500"
+  viewBox="0 0 1200 440"
   fill="none"
   class="w-full"
   aria-hidden="true"
   focusable="false"
 >
-  <!-- ======================= COMPILE TIME ======================= -->
-  <text class="fg-zone" x="1176" y="22" text-anchor="end">
-    Compile time · UICC
-  </text>
+  <text class="fg-zone" x="24" y="26">Front end · shared</text>
 
-  <!-- 01 -->
+  <!-- ===================== SHARED FRONT END ====================== -->
   <g class="fg-part" data-step="01">
-    <rect class="fg-box" x="24" y="40" width="192" height="64"></rect>
-    <text class="fg-name" x="120" y="67">C source</text>
-    <text class="fg-sub" x="120" y="86">#pragma annotated</text>
+    <rect class="fg-box" x="24" y="44" width="200" height="60"></rect>
+    <text class="fg-name" x="124" y="70">Preprocess</text>
+    <text class="fg-sub" x="124" y="89">Preprocessor.py</text>
     <g class="fg-tag">
-      <rect x="96" y="28" width="48" height="16"></rect>
-      <text x="120" y="39.5">[ 01 ]</text>
+      <rect x="100" y="32" width="48" height="16"></rect>
+      <text x="124" y="43.5">[ 01 ]</text>
     </g>
   </g>
 
-  <!-- 02 -->
   <g class="fg-part" data-step="02">
-    <rect class="fg-box" x="240" y="40" width="192" height="64"></rect>
-    <text class="fg-name" x="336" y="67">Preprocessor</text>
-    <text class="fg-sub" x="336" y="86">Preprocessor.py</text>
+    <rect class="fg-box" x="24" y="130" width="200" height="60"></rect>
+    <text class="fg-name" x="124" y="156">Parse</text>
+    <text class="fg-sub" x="124" y="175">uicc.py · CParser</text>
     <g class="fg-tag">
-      <rect x="312" y="28" width="48" height="16"></rect>
-      <text x="336" y="39.5">[ 02 ]</text>
+      <rect x="100" y="118" width="48" height="16"></rect>
+      <text x="124" y="129.5">[ 02 ]</text>
     </g>
   </g>
 
-  <!-- 03 -->
+  <!-- The hinge. Filled, because both roads read from it. -->
   <g class="fg-part" data-step="03">
-    <rect class="fg-box" x="456" y="40" width="192" height="64"></rect>
-    <text class="fg-name" x="552" y="67">Parse · symbols</text>
-    <text class="fg-sub" x="552" y="86">CParser · RISCVGenerator</text>
+    <rect class="fg-fill" x="24" y="216" width="200" height="60"></rect>
+    <rect class="fg-box" x="24" y="216" width="200" height="60"></rect>
+    <text class="fg-name" x="124" y="242">Symbol table</text>
+    <text class="fg-sub" x="124" y="261">symtab.py</text>
     <g class="fg-tag">
-      <rect x="528" y="28" width="48" height="16"></rect>
-      <text x="552" y="39.5">[ 03 ]</text>
+      <rect x="100" y="204" width="48" height="16"></rect>
+      <text x="124" y="215.5">[ 03 ]</text>
     </g>
   </g>
 
-  <!-- 04 -->
+  <path class="fg-wire" d="M124 104 V121"></path>
+  <polygon class="fg-head" points="124,130 119,121 129,121"></polygon>
+  <path class="fg-wire" d="M124 190 V207"></path>
+  <polygon class="fg-head" points="124,216 119,207 129,207"></polygon>
+
+  <!-- The shared labeler. Drawn once, between the lanes, touching both. -->
   <g class="fg-part" data-step="04">
-    <rect class="fg-box" x="672" y="40" width="192" height="64"></rect>
-    <text class="fg-name" x="768" y="67">Labeled trees</text>
-    <text class="fg-sub" x="768" y="86">subject · action · object</text>
+    <rect class="fg-fill" x="268" y="216" width="212" height="60"></rect>
+    <rect class="fg-box" x="268" y="216" width="212" height="60"></rect>
+    <text class="fg-name" x="374" y="242">Canonical labels</text>
+    <text class="fg-sub" x="374" y="261">bhpol_labels.py</text>
     <g class="fg-tag">
-      <rect x="744" y="28" width="48" height="16"></rect>
-      <text x="768" y="39.5">[ 04 ]</text>
+      <rect x="350" y="204" width="48" height="16"></rect>
+      <text x="374" y="215.5">[ 04 ]</text>
     </g>
   </g>
 
-  <!-- 05 -->
-  <g class="fg-part" data-step="05">
-    <rect class="fg-box" x="888" y="40" width="192" height="64"></rect>
-    <text class="fg-name" x="984" y="67">Address resolution</text>
-    <text class="fg-sub" x="984" y="86">label → 0x30000 + off</text>
-    <g class="fg-tag">
-      <rect x="960" y="28" width="48" height="16"></rect>
-      <text x="984" y="39.5">[ 05 ]</text>
-    </g>
-  </g>
+  <path class="fg-wire" d="M224 246 H259"></path>
+  <polygon class="fg-head" points="268,246 259,241 259,251"></polygon>
 
-  <!-- Row 1 flow -->
-  <path class="fg-wire" d="M216 72 H231"></path>
-  <polygon class="fg-head" points="240,72 231,67 231,77"></polygon>
-  <path class="fg-wire" d="M432 72 H447"></path>
-  <polygon class="fg-head" points="456,72 447,67 447,77"></polygon>
-  <path class="fg-wire" d="M648 72 H663"></path>
-  <polygon class="fg-head" points="672,72 663,67 663,77"></polygon>
-  <path class="fg-wire" d="M864 72 H879"></path>
-  <polygon class="fg-head" points="888,72 879,67 879,77"></polygon>
-
-  <!-- 05 down into the .policy_meta cell of the binary -->
-  <path class="fg-wire" d="M984 104 V142 H948 V167"></path>
-  <polygon class="fg-head" points="948,176 943,167 953,167"></polygon>
-
-  <!-- ===================== THE BINARY (06) ====================== -->
-  <g class="fg-part" data-step="06">
-    <rect class="fg-fill" x="24" y="176" width="1056" height="92"></rect>
-    <rect class="fg-box" x="24" y="176" width="1056" height="92"></rect>
-    <path class="fg-wire" d="M24 204 H1080" stroke-width="1"></path>
-
-    <text
-      class="fg-sub"
-      x="98"
-      y="196"
-      text-anchor="start"
-      style="letter-spacing:0.08em">program.elf</text
-    >
-    <text
-      class="fg-sub"
-      x="1066"
-      y="196"
-      text-anchor="end"
-      style="letter-spacing:0.08em">RISC-V ELF32 · policy-carrying</text
-    >
-
-    <!-- Section cells -->
-    <path class="fg-wire" d="M288 204 V268" stroke-width="1"></path>
-    <path class="fg-wire" d="M552 204 V268" stroke-width="1"></path>
-    <path class="fg-wire" d="M816 204 V268" stroke-width="1"></path>
-
-    <text class="fg-name" x="156" y="232" style="font-size:12px">.text</text>
-    <text class="fg-sub" x="156" y="250">instructions</text>
-    <text class="fg-name" x="420" y="232" style="font-size:12px">.data</text>
-    <text class="fg-sub" x="420" y="250">globals</text>
-    <text class="fg-name" x="684" y="232" style="font-size:12px">.text_tag</text>
-    <text class="fg-sub" x="684" y="250">per-instruction label</text>
-    <text class="fg-name" x="948" y="232" style="font-size:12px"
-      >.policy_meta</text
-    >
-    <text class="fg-sub" x="948" y="250">the policy table</text>
-
-    {/* Seated on the top edge like every other tag, and inside the bar's own
-        width — hung off the corner it read as a label for nothing. */}
-    <g class="fg-tag">
-      <rect x="32" y="168" width="48" height="16"></rect>
-      <text x="56" y="179.5">[ 06 ]</text>
-    </g>
-  </g>
-
-  <!-- The boundary the artifact crosses -->
-  <path class="fg-bound" d="M0 312 H1200"></path>
-  <text class="fg-zone" x="1176" y="336" text-anchor="end">
-    Runtime · FlexSiMArch
+  <!-- ====================== COMPILE ROAD ========================= -->
+  <text class="fg-zone" x="1072" y="64" text-anchor="end">
+    Compile road · what an experiment runs
   </text>
 
-  <!-- .text loads into memory -->
-  <path class="fg-wire" d="M120 268 V363"></path>
-  <polygon class="fg-head" points="120,372 115,363 125,363"></polygon>
+  <g class="fg-part" data-step="05">
+    <rect class="fg-box" x="268" y="86" width="186" height="60"></rect>
+    <text class="fg-name" x="361" y="112">Code generation</text>
+    <text class="fg-sub" x="361" y="131">RISCVGenerator</text>
+    <g class="fg-tag">
+      <rect x="337" y="74" width="48" height="16"></rect>
+      <text x="361" y="85.5">[ 05 ]</text>
+    </g>
+  </g>
 
-  <!-- .text_tag and .policy_meta converge on the enforcement unit -->
-  <path class="fg-wire" d="M948 268 V340 H768 V363"></path>
-  <path class="fg-wire" d="M684 268 V340"></path>
-  <polygon class="fg-head" points="768,372 763,363 773,363"></polygon>
-  <circle class="fg-head" cx="768" cy="340" r="3.5"></circle>
-  <text
-    class="fg-sub"
-    x="962"
-    y="296"
-    text-anchor="start"
-    style="letter-spacing:0.08em">loaded before instruction 0</text
-  >
+  <g class="fg-part" data-step="06">
+    <rect class="fg-box" x="474" y="86" width="186" height="60"></rect>
+    <text class="fg-name" x="567" y="112">ELF and tags</text>
+    <text class="fg-sub" x="567" y="131">.elf · .telf</text>
+    <g class="fg-tag">
+      <rect x="543" y="74" width="48" height="16"></rect>
+      <text x="567" y="85.5">[ 06 ]</text>
+    </g>
+  </g>
 
-  <!-- ========================= RUNTIME ========================== -->
-  <!-- 07 -->
   <g class="fg-part" data-step="07">
-    <rect class="fg-box" x="24" y="372" width="192" height="64"></rect>
-    <text class="fg-name" x="120" y="399">Loader</text>
-    <text class="fg-sub" x="120" y="418">BIOS · ELF loader</text>
+    <rect class="fg-box" x="680" y="86" width="186" height="60"></rect>
+    <text class="fg-name" x="773" y="112">Corpora</text>
+    <text class="fg-sub" x="773" y="131">2,460 cases</text>
     <g class="fg-tag">
-      <rect x="96" y="360" width="48" height="16"></rect>
-      <text x="120" y="371.5">[ 07 ]</text>
+      <rect x="749" y="74" width="48" height="16"></rect>
+      <text x="773" y="85.5">[ 07 ]</text>
     </g>
   </g>
 
-  <!-- 08 -->
   <g class="fg-part" data-step="08">
-    <rect class="fg-box" x="240" y="372" width="192" height="64"></rect>
-    <text class="fg-name" x="336" y="399">Sparse memory</text>
-    <text class="fg-sub" x="336" y="418">RAM · RV64</text>
+    <rect class="fg-fill" x="886" y="86" width="186" height="60"></rect>
+    <rect class="fg-box" x="886" y="86" width="186" height="60"></rect>
+    <text class="fg-name" x="979" y="112">FlexSiMArch</text>
+    <text class="fg-sub" x="979" y="131">run and measure</text>
     <g class="fg-tag">
-      <rect x="312" y="360" width="48" height="16"></rect>
-      <text x="336" y="371.5">[ 08 ]</text>
+      <rect x="955" y="74" width="48" height="16"></rect>
+      <text x="979" y="85.5">[ 08 ]</text>
     </g>
   </g>
 
-  <!-- 09 -->
+  <!-- Labeling feeds code generation -->
+  <path class="fg-wire" d="M374 216 V155"></path>
+  <polygon class="fg-head" points="374,146 369,155 379,155"></polygon>
+
+  <path class="fg-wire" d="M454 116 H465"></path>
+  <polygon class="fg-head" points="474,116 465,111 465,121"></polygon>
+  <path class="fg-wire" d="M660 116 H671"></path>
+  <polygon class="fg-head" points="680,116 671,111 671,121"></polygon>
+  <path class="fg-wire" d="M866 116 H877"></path>
+  <polygon class="fg-head" points="886,116 877,111 877,121"></polygon>
+
+  <!-- ======================== JSON ROAD ========================== -->
+  <text class="fg-zone" x="866" y="326" text-anchor="end">
+    JSON road · what makes the trees reviewable
+  </text>
+
   <g class="fg-part" data-step="09">
-    <rect class="fg-box" x="456" y="372" width="192" height="64"></rect>
-    <text class="fg-name" x="552" y="399">Hardware thread</text>
-    <text class="fg-sub" x="552" y="418">Hart · Capstone · Executor</text>
+    <rect class="fg-box" x="268" y="348" width="186" height="60"></rect>
+    <text class="fg-name" x="361" y="374">Stage 1–3 JSON</text>
+    <text class="fg-sub" x="361" y="393">bhpol_pipeline.py</text>
     <g class="fg-tag">
-      <rect x="528" y="360" width="48" height="16"></rect>
-      <text x="552" y="371.5">[ 09 ]</text>
+      <rect x="337" y="336" width="48" height="16"></rect>
+      <text x="361" y="347.5">[ 09 ]</text>
     </g>
   </g>
 
-  <!-- 10 — the enforcement unit -->
   <g class="fg-part" data-step="10">
-    <rect class="fg-fill" x="672" y="372" width="192" height="64"></rect>
-    <rect class="fg-box" x="672" y="372" width="192" height="64"></rect>
-    <text class="fg-name" x="768" y="399">Policy check</text>
-    <text class="fg-sub" x="768" y="418">O(1) prefix match</text>
+    <rect class="fg-box" x="474" y="348" width="186" height="60"></rect>
+    <text class="fg-name" x="567" y="374">Transform</text>
+    <text class="fg-sub" x="567" y="393">bhpol_transform.py</text>
     <g class="fg-tag">
-      <rect x="744" y="360" width="48" height="16"></rect>
-      <text x="768" y="371.5">[ 10 ]</text>
+      <rect x="543" y="336" width="48" height="16"></rect>
+      <text x="567" y="347.5">[ 10 ]</text>
     </g>
   </g>
 
-  <!-- Row 2 flow -->
-  <path class="fg-wire" d="M216 404 H231"></path>
-  <polygon class="fg-head" points="240,404 231,399 231,409"></polygon>
-  <path class="fg-wire" d="M432 404 H447"></path>
-  <polygon class="fg-head" points="456,404 447,399 447,409"></polygon>
-  <path class="fg-wire" d="M648 404 H663"></path>
-  <polygon class="fg-head" points="672,404 663,399 663,409"></polygon>
-
-  <!-- Every access forks here. Both outcomes are drawn; neither is an edge case. -->
-  <path class="fg-wire" d="M864 404 H892 V378 H911"></path>
-  <path class="fg-wire" d="M892 404 V454 H911"></path>
-  <polygon class="fg-head" points="920,378 911,373 911,383"></polygon>
-  <polygon class="fg-head" points="920,454 911,449 911,459"></polygon>
-  <circle class="fg-head" cx="892" cy="404" r="3.5"></circle>
-
-  <!-- 11 permitted -->
   <g class="fg-part" data-step="11">
-    <rect class="fg-box" x="920" y="352" width="256" height="52"></rect>
-    <text class="fg-name" x="1048" y="375">Access reaches memory</text>
-    <text class="fg-sub" x="1048" y="392">56 of 7,381 combinations</text>
+    <rect class="fg-box" x="680" y="348" width="186" height="60"></rect>
+    <text class="fg-name" x="773" y="374">Trees and reports</text>
+    <text class="fg-sub" x="773" y="393">bhpol_visualize.py</text>
+    <g class="fg-tag">
+      <rect x="749" y="336" width="48" height="16"></rect>
+      <text x="773" y="347.5">[ 11 ]</text>
+    </g>
   </g>
 
-  <!-- 12 denied — the default, and the only part drawn in the second signal -->
-  <g class="fg-part" data-step="12">
-    <rect
-      class="fg-box"
-      x="920"
-      y="428"
-      width="256"
-      height="52"
-      stroke="var(--deny)"></rect>
-    <text class="fg-name" x="1048" y="451" fill="var(--deny)"
-      >Denied before memory</text
-    >
-    <text class="fg-sub" x="1048" y="468">7,325 · deny by default</text>
-  </g>
+  <!-- The symbol table feeds the second road directly -->
+  <path class="fg-wire" d="M124 276 V378 H259"></path>
+  <polygon class="fg-head" points="268,378 259,373 259,383"></polygon>
+
+  <path class="fg-wire" d="M454 378 H465"></path>
+  <polygon class="fg-head" points="474,378 465,373 465,383"></polygon>
+  <path class="fg-wire" d="M660 378 H671"></path>
+  <polygon class="fg-head" points="680,378 671,373 671,383"></polygon>
+
+  <!-- The dashed link: one label algebra, both roads. This is the line that
+       makes the two roads consistent, so it is annotated rather than left to
+       be inferred from the dash pattern. -->
+  <path class="fg-ghost" d="M440 276 V318 H567 V339"></path>
+  <polygon class="fg-head" points="567,348 562,339 572,339"></polygon>
+  <circle class="fg-head" cx="440" cy="318" r="3"></circle>
+  <text class="fg-sub" x="578" y="314" text-anchor="start"
+    >one label algebra, both roads</text
+  >
 </svg>
