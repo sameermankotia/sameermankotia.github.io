@@ -26,11 +26,9 @@ export const person = {
  * `handle` is the address read back as written, so a reader knows where a link
  * goes before following it.
  *
- * GitHub and the email are confirmed. Scholar points at a name search rather
- * than a profile, because a profile URL needs an opaque user id that was not
- * recoverable — swap in the real one and it becomes a better link. LinkedIn is
- * the conventional spelling of the handle and is the one entry here still
- * unverified; `verify: true` marks it.
+ * All four were confirmed by the person they belong to. Nothing here is a
+ * guess any more, so `verify` is false throughout; keep the field, because the
+ * next link added will start out unconfirmed.
  */
 export const links = [
   {
@@ -42,17 +40,17 @@ export const links = [
   },
   {
     name: "Google Scholar",
-    href: "https://scholar.google.com/scholar?q=%22Sameer+Mankotia%22",
+    href: "https://scholar.google.com/citations?user=QGQA0RM2okMC&hl=en",
     handle: "scholar.google.com",
     note: "Papers and citations",
     verify: false,
   },
   {
     name: "LinkedIn",
-    href: "https://www.linkedin.com/in/sameer-mankotia",
-    handle: "linkedin.com/in/sameer-mankotia",
+    href: "https://www.linkedin.com/in/saameer24/",
+    handle: "linkedin.com/in/saameer24",
     note: "Work history",
-    verify: true,
+    verify: false,
   },
   {
     name: "Email",
@@ -81,8 +79,9 @@ export const sections: readonly Section[] = [
   { id: ".text", addr: "0x10000", holds: "My dissertation" },
   { id: ".policy_meta", addr: "0x20000", holds: "Try the policy engine" },
   { id: ".data", addr: "0x30000", holds: "Projects" },
-  { id: ".rodata", addr: "0x40000", holds: "Papers" },
-  { id: ".symtab", addr: "0x50000", holds: "Contact" },
+  { id: ".init", addr: "0x40000", holds: "Where I have worked" },
+  { id: ".rodata", addr: "0x50000", holds: "Papers" },
+  { id: ".symtab", addr: "0x60000", holds: "Contact" },
 ];
 
 /** The dissertation itself, named wherever the page refers to it. */

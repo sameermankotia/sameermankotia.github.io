@@ -1,0 +1,113 @@
+---
+/**
+ * .init — the work history, and the systems it produced.
+ *
+ * The roles come first as a compact table: four rows, dated, with the current
+ * two marked. Then the three systems as cards, each led by a plate, because
+ * these are the pieces of the work a visitor can actually go and look at.
+ *
+ * A card with no link says why rather than going quiet about it. An absent
+ * link that is explained reads as a closed repository; an absent link that is
+ * not reads as a project that never shipped.
+ */
+import { roles, projects } from "@/data/experience";
+import PlateOCR from "./figures/PlateOCR.astro";
+import PlateNexus from "./figures/PlateNexus.astro";
+import PlateMyUI from "./figures/PlateMyUI.astro";
+
+const plates = { ocr: PlateOCR, nexus: PlateNexus, myui: PlateMyUI };
+---
+
+<section id="init" data-section=".init" class="scroll-mt-24 pt-24 sm:pt-32">
+  <div class="sect-head">
+    <h2 class="t-headline shrink-0">.init</h2>
+    <p class="t-label text-muted">Where I have worked</p>
+    <p class="t-ident ml-auto text-muted">{roles.length} roles</p>
+  </div>
+
+  <!-- The roles. A table, because the useful reading is chronological. -->
+  <ol class="mt-6">
+    {
+      roles.map((role) => (
+        <li class="grid gap-x-10 gap-y-2 border-b border-rule py-5 lg:grid-cols-[minmax(0,13rem)_minmax(0,1fr)]">
+          <div class="flex flex-wrap items-baseline gap-x-3 lg:block">
+            <span
+              class:list={[
+                "t-ident tabular-nums",
+                role.current ? "text-allow" : "text-muted",
+              ]}
+            >
+              {role.span}
+            </span>
+            {role.current && (
+              <span class="t-label text-allow lg:mt-1 lg:block">Current</span>
+            )}
+          </div>
+          <div>
+            <h3 class="t-title">{role.title}</h3>
+            <p class="t-ident mt-1 text-muted">{role.org}</p>
+            <p class="t-small measure mt-2 text-muted">{role.note}</p>
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+
+  <!-- The systems those roles produced. -->
+  <h3 class="t-label mt-16 border-b border-rule-strong pb-2 text-muted">
+    What I built there
+  </h3>
+
+  <div class="mt-8 grid gap-px bg-rule xl:grid-cols-3">
+    {
+      projects.map((project) => {
+        const Plate = plates[project.id];
+        return (
+          <article class="flex flex-col bg-ground p-6">
+            <figure>
+              <Plate />
+              <figcaption class="sr-only">{project.plateAlt}</figcaption>
+            </figure>
+
+            <h4 class="t-title mt-6">{project.name}</h4>
+            <p class="t-ident mt-1.5 text-muted">{project.org}</p>
+
+            {project.href ? (
+              <a
+                href={project.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="t-ident mt-3 inline-block break-all text-allow underline decoration-rule-strong underline-offset-4 transition-colors hover:text-ink"
+              >
+                {project.hrefLabel} →
+              </a>
+            ) : (
+              <p class="t-ident mt-3 text-muted">{project.closed}</p>
+            )}
+
+            <p class="t-small mt-4 text-muted">{project.summary}</p>
+
+            <ul class="mt-4 space-y-2">
+              {project.points.map((point) => (
+                <li class="t-small flex gap-2.5 text-muted">
+                  <span class="t-ident shrink-0 text-allow" aria-hidden="true">
+                    ·
+                  </span>
+                  <span>{point}</span>
+                </li>
+              ))}
+            </ul>
+
+            <ul class="mt-auto flex flex-wrap gap-x-2 gap-y-1.5 pt-6">
+              {project.stack.map((tool) => (
+                <li class="t-ident border border-rule px-2 py-1 text-muted">
+                  {tool}
+                </li>
+              ))}
+            </ul>
+          </article>
+        );
+      })
+    }
+  </div>
+</section>

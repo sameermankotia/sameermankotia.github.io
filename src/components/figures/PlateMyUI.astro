@@ -1,0 +1,43 @@
+---
+/**
+ * Plate — MyUI cards.
+ *
+ * One card, branching on role. Drawing it as a branch rather than as two
+ * boxes side by side is the accurate reading: there is a single component,
+ * and the role decides what it fetches and renders.
+ */
+---
+
+<svg viewBox="0 0 360 150" fill="none" class="fg-plate w-full" aria-hidden="true" focusable="false">
+  <g class="fg-part">
+    <rect class="fg-box" x="8" y="58" width="86" height="34"></rect>
+    <text class="fg-name" x="51" y="76">Campus Labs</text>
+    <text class="fg-sub" x="51" y="88">REST API</text>
+  </g>
+
+  <path class="fg-wire" d="M94 75 H109"></path>
+  <polygon class="fg-head" points="118,75 109,70 109,80"></polygon>
+
+  <g class="fg-part">
+    <rect class="fg-fill" x="118" y="58" width="80" height="34"></rect>
+    <rect class="fg-box" x="118" y="58" width="80" height="34"></rect>
+    <text class="fg-name" x="158" y="76">MyUI card</text>
+    <text class="fg-sub" x="158" y="88">React · Node</text>
+  </g>
+
+  <!-- The branch: one component, two audiences -->
+  <text class="fg-sub" x="214" y="20">role</text>
+  <path class="fg-wire" d="M198 75 H214 M214 42 V108 M214 42 H227 M214 108 H227"></path>
+  <polygon class="fg-head" points="236,42 227,37 227,47"></polygon>
+  <polygon class="fg-head" points="236,108 227,103 227,113"></polygon>
+  <circle class="fg-head" cx="214" cy="75" r="2.5"></circle>
+
+  <g class="fg-part">
+    <rect class="fg-box" x="236" y="28" width="112" height="28"></rect>
+    <text class="fg-name" x="292" y="46">Student view</text>
+  </g>
+  <g class="fg-part">
+    <rect class="fg-box" x="236" y="94" width="112" height="28"></rect>
+    <text class="fg-name" x="292" y="112">Staff view</text>
+  </g>
+</svg>

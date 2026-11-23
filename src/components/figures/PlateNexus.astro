@@ -1,0 +1,56 @@
+---
+/**
+ * Plate — Nexus.
+ *
+ * The gate on the first edge is the point. Access is decided against the
+ * university's existing Entra groups before a request reaches the service, so
+ * permissions follow the directory rather than a second list kept beside it.
+ */
+---
+
+<svg viewBox="0 0 360 150" fill="none" class="fg-plate w-full" aria-hidden="true" focusable="false">
+  <text class="fg-sub" x="100" y="20">Entra ID</text>
+
+  <g class="fg-part">
+    <rect class="fg-box" x="14" y="30" width="72" height="34"></rect>
+    <text class="fg-name" x="50" y="48">React</text>
+    <text class="fg-sub" x="50" y="60">TypeScript</text>
+  </g>
+
+  <!-- The access gate: nothing reaches the service unauthorised -->
+  <path class="fg-wire" d="M86 47 H91"></path>
+  <g class="fg-gate">
+    <path class="fg-wire" d="M93 40 L107 54 L107 40 L93 54 Z"></path>
+    <path class="fg-wire" d="M100 36 V58"></path>
+  </g>
+  <path class="fg-wire" d="M109 47 H118"></path>
+  <polygon class="fg-head" points="127,47 118,42 118,52"></polygon>
+
+  <g class="fg-part">
+    <rect class="fg-fill" x="127" y="30" width="78" height="34"></rect>
+    <rect class="fg-box" x="127" y="30" width="78" height="34"></rect>
+    <text class="fg-name" x="166" y="48">FastAPI</text>
+    <text class="fg-sub" x="166" y="60">api · services</text>
+  </g>
+
+  <path class="fg-wire" d="M205 47 H221"></path>
+  <polygon class="fg-head" points="230,47 221,42 221,52"></polygon>
+
+  <g class="fg-part">
+    <rect class="fg-box" x="230" y="30" width="76" height="34"></rect>
+    <text class="fg-name" x="268" y="48">Workers</text>
+    <text class="fg-sub" x="268" y="60">background</text>
+  </g>
+
+  <!-- Both the service and its workers persist to one store -->
+  <path class="fg-wire" d="M166 64 V87"></path>
+  <polygon class="fg-head" points="166,96 161,87 171,87"></polygon>
+  <path class="fg-wire" d="M268 64 V80 H203 V87"></path>
+  <polygon class="fg-head" points="203,96 198,87 208,87"></polygon>
+
+  <g class="fg-part">
+    <rect class="fg-box" x="127" y="96" width="112" height="34"></rect>
+    <text class="fg-name" x="183" y="114">Database</text>
+    <text class="fg-sub" x="183" y="126">schema · triggers</text>
+  </g>
+</svg>

@@ -472,3 +472,21 @@
     fill: color-mix(in oklab, var(--allow) 12%, var(--ground));
   }
 }
+
+/* Plates: small drawings rendered large. Their type is set down so they read
+   as plates beside prose rather than as diagrams competing with FIG. 1, and
+   the gate symbol borrows the figure's object stroke. */
+@layer components {
+  .fg-plate .fg-name {
+    font-size: 11px;
+  }
+
+  .fg-plate .fg-sub {
+    font-size: 8px;
+    letter-spacing: 0.04em;
+  }
+
+  .fg-plate .fg-box {
+    stroke-width: 1.5px;
+  }
+}
