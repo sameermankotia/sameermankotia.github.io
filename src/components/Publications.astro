@@ -9,12 +9,16 @@
  */
 import { papers, timeline } from "@/data/publications";
 
-const settled = papers.filter((p) => p.status !== "under review").length;
+// Published and accepted only; see the note in Statement.astro.
+const settled = papers.filter(
+  (p) => p.status === "published" || p.status === "accepted",
+).length;
 
 const statusTone: Record<string, string> = {
   published: "text-allow",
   accepted: "text-allow",
   "under review": "text-muted",
+  "in preparation": "text-muted",
 };
 ---
 
@@ -23,7 +27,7 @@ const statusTone: Record<string, string> = {
     <h2 class="t-headline shrink-0">.rodata</h2>
     <p class="t-label text-muted">Papers</p>
     <p class="t-ident ml-auto text-muted">
-      {settled} published or accepted · {papers.length - settled} under review
+      {settled} published or accepted · {papers.length - settled} in flight
     </p>
   </div>
 

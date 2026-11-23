@@ -14,9 +14,14 @@ import { person, dissertation } from "@/data/site";
 import { papers } from "@/data/publications";
 
 // Counted from the record rather than typed in, so the headline number cannot
-// drift away from the list further down the page.
-const settled = papers.filter((p) => p.status !== "under review").length;
-const reviewing = papers.length - settled;
+// drift away from the list further down the page. Only published and accepted
+// count as settled: a paper under review or still in preparation has not been
+// judged by anyone yet, and rolling it in would be the one dishonest number
+// on the page.
+const settled = papers.filter(
+  (p) => p.status === "published" || p.status === "accepted",
+).length;
+const pending = papers.length - settled;
 ---
 
 <section id="text" data-section=".text" class="scroll-mt-24">
@@ -66,7 +71,7 @@ const reviewing = papers.length - settled;
       <dt class="t-label text-muted">Papers</dt>
       <dd class="t-title mt-2">{settled} published or accepted</dd>
       <dd class="t-small mt-1 text-muted">
-        Plus {reviewing} under review, across IEEE, ACM and MDPI
+        Plus {pending} under review or in preparation
       </dd>
     </div>
   </dl>

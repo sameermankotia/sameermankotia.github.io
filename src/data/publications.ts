@@ -8,16 +8,16 @@
  * `claim` is one plain sentence on what the paper found — not the abstract,
  * and not the title restated.
  *
- * Three of these were recovered from the READMEs of the repositories rather
- * than from the resume, which predates them: the ACM TIST, NeurIPS workshop
- * and ICML entries. Confirm their status before this is cited anywhere.
+ * Four states, not three. "In preparation" means drafted and not yet
+ * submitted, which "under review" would overstate. Every status here was
+ * confirmed by the author.
  */
 
 export type Paper = {
   title: string;
   venue: string;
   year: string;
-  status: "published" | "accepted" | "under review";
+  status: "published" | "accepted" | "under review" | "in preparation";
   claim: string;
   /** The repository holding the code, where there is one. */
   code?: string;
@@ -70,7 +70,7 @@ export const papers: readonly Paper[] = [
       "The Terminal Is Enough: Formalizing the Sovereign Model Loop for Fully Local Reinforcement Learning Fine-Tuning on Consumer Silicon",
     venue: "ACM Transactions on Intelligent Systems and Technology",
     year: "2026",
-    status: "accepted",
+    status: "under review",
     claim:
       "You can fine-tune a model with reinforcement learning entirely on your own machine, watch it happen in a terminal, and close the whole feedback loop in under 100 milliseconds.",
     code: "sovereign-model-loop",
@@ -89,7 +89,7 @@ export const papers: readonly Paper[] = [
       "Structural Quality and Security in Agentic Software Engineering: A Multi-Dimensional Empirical Evaluation",
     venue: "IEEE Access",
     year: "2026",
-    status: "under review",
+    status: "accepted",
     claim:
       "What AI-written code is actually like once you measure more than whether the tests pass — complexity, maintainability, security density and duplication, against a human baseline.",
     code: "Benchmarking-Agentic-AI-Generated-Code-Against-Human-Written-Code",
@@ -97,7 +97,7 @@ export const papers: readonly Paper[] = [
   {
     title:
       "MoE-Former++: Intelligent Expert Routing and Adaptive Load Balancing for Trillion-Parameter Models via Graph-Guided Neural Optimization",
-    venue: "ICML",
+    venue: "IEEE Transactions on Parallel and Distributed Systems",
     year: "2026",
     status: "under review",
     claim:
@@ -107,9 +107,9 @@ export const papers: readonly Paper[] = [
   {
     title:
       "Mirrors that Remember: Measuring Self-Image Sycophancy in Language Models under Persistent Memory",
-    venue: "NeurIPS workshop — AI and the Self",
+    venue: "NeurIPS workshop — AI and the Self, Paris",
     year: "2026",
-    status: "under review",
+    status: "accepted",
     claim:
       "Models are known to agree with what you believe about the world. This asks whether remembering what you believe about yourself makes them flatter you, and whether memory makes it stick.",
     code: "Memory-mirror",
@@ -119,7 +119,7 @@ export const papers: readonly Paper[] = [
       "Consistency as Uncertainty: Using Repeated Sampling Agreement to Guide Robust Knowledge Distillation into Small Language Models",
     venue: "MDPI",
     year: "2026",
-    status: "under review",
+    status: "in preparation",
     claim:
       "When a model disagrees with itself across repeated attempts, that disagreement is a usable signal — and you can steer the training of a smaller model with it.",
   },
