@@ -1,0 +1,96 @@
+---
+/**
+ * .rodata — the publication record, and the timeline it sits on.
+ *
+ * Read-only in both senses: these are fixed artifacts, and the section states
+ * them without selling them. Status is printed as it stands, because a reader
+ * evaluating this record is entitled to the difference between published and
+ * under review without having to go and find out.
+ */
+import { papers, timeline } from "@/data/publications";
+
+const settled = papers.filter((p) => p.status !== "under review").length;
+
+const statusTone: Record<string, string> = {
+  published: "text-allow",
+  accepted: "text-allow",
+  "under review": "text-muted",
+};
+---
+
+<section id="rodata" data-section=".rodata" class="scroll-mt-24 pt-24 sm:pt-32">
+  <div class="sect-head">
+    <h2 class="t-headline shrink-0">.rodata</h2>
+    <p class="t-label text-muted">Papers</p>
+    <p class="t-ident ml-auto text-muted">
+      {settled} published or accepted · {papers.length - settled} under review
+    </p>
+  </div>
+
+  <ol class="mt-2">
+    {
+      papers.map((paper) => (
+        <li class="grid gap-x-10 gap-y-2 border-b border-rule py-6 lg:grid-cols-[6rem_minmax(0,1fr)]">
+          <div class="flex items-baseline gap-3 lg:flex-col lg:gap-1.5">
+            <span class="t-ident text-muted tabular-nums">{paper.year}</span>
+            <span class={`t-label ${statusTone[paper.status]}`}>
+              {paper.status}
+            </span>
+          </div>
+
+          <div>
+            <h3 class="t-title measure">{paper.title}</h3>
+            <p class="t-ident mt-2 text-muted">{paper.venue}</p>
+            <p class="t-small measure mt-3 text-muted">{paper.claim}</p>
+
+            {/* Both routes to the artifact itself, where they exist: the
+                published record, and the code that produced its numbers. */}
+            <p class="mt-3 flex flex-wrap gap-x-5 gap-y-1">
+              {paper.doi && (
+                <a
+                  href={`https://doi.org/${paper.doi}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="t-ident text-muted underline decoration-rule-strong underline-offset-4 transition-colors hover:text-allow"
+                >
+                  doi:{paper.doi}
+                </a>
+              )}
+              {paper.code && (
+                <a
+                  href={`https://github.com/sameermankotia/${paper.code}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="t-ident text-muted underline decoration-rule-strong underline-offset-4 transition-colors hover:text-allow"
+                >
+                  code →
+                </a>
+              )}
+            </p>
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+
+  {/* The timeline, from the proposal's own §4.4. It is here rather than in a
+      separate section because the honest reading of a publication list is
+      chronological, and the last row is the one that is not done yet. */}
+  <h3 class="t-label mt-16 border-b border-rule pb-2 text-muted">
+    How the dissertation got here
+  </h3>
+  <ol class="mt-2">
+    {
+      timeline.map((row, i) => (
+        <li class="grid gap-x-10 gap-y-1 border-b border-rule-faint py-4 sm:grid-cols-[13rem_minmax(0,1fr)]">
+          <span
+            class={`t-ident tabular-nums ${i === timeline.length - 1 ? "text-allow" : "text-muted"}`}
+          >
+            {row.when}
+          </span>
+          <span class="t-small measure">{row.what}</span>
+        </li>
+      ))
+    }
+  </ol>
+</section>

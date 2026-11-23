@@ -1,0 +1,43 @@
+---
+/**
+ * The address rail.
+ *
+ * A section header table, down the left edge: the name of each section, where
+ * it is loaded, and what it holds. It is the page's navigation and its
+ * progress indicator at once, and it reports real addresses — these are the
+ * bases the UICC compiler assigns for text, rodata, data and BSS.
+ *
+ * Only drawn at xl and above, where there is a column to spare. Below that the
+ * status bar carries the same links, so nothing is reachable only here.
+ */
+import { sections } from "@/data/site";
+---
+
+<nav
+  aria-label="Section map"
+  class="fixed top-(--bar-h) bottom-0 left-0 z-40 hidden w-(--rail-w) flex-col overflow-y-auto border-r border-rule py-8 pr-4 pl-(--pad-x) xl:flex"
+>
+  <ul class="space-y-px">
+    {
+      sections.map((section) => (
+        <li>
+          <a
+            href={`#${section.id.slice(1)}`}
+            data-rail-link={section.id}
+            class="group block border-l-2 border-transparent py-2 pl-3 transition-colors aria-[current=true]:border-allow hover:border-rule-strong"
+          >
+            <span class="t-ident block text-muted tabular-nums transition-colors group-aria-[current=true]:text-allow">
+              {section.addr}
+            </span>
+            <span class="t-ident block font-semibold transition-colors group-hover:text-allow">
+              {section.id}
+            </span>
+            <span class="t-label mt-1 block text-[0.625rem] tracking-[0.1em] text-muted normal-case">
+              {section.holds}
+            </span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>

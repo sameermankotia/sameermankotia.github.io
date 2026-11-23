@@ -1,0 +1,66 @@
+---
+/**
+ * .symtab — where the names resolve to.
+ *
+ * A symbol table is what a reader consults to find out where something
+ * actually lives, so the contact block is one: each row names a destination
+ * and shows its address before it is followed. It is a standing reference,
+ * not a pitch, so there is no headline asking for anything.
+ */
+import { person, links } from "@/data/site";
+---
+
+<section
+  id="symtab"
+  data-section=".symtab"
+  class="scroll-mt-24 pt-24 sm:pt-32"
+>
+  <div class="sect-head">
+    <h2 class="t-headline shrink-0">.symtab</h2>
+    <p class="t-label text-muted">Symbols resolved</p>
+    <p class="t-ident ml-auto text-muted">{links.length} entries</p>
+  </div>
+
+  <ul class="mt-2">
+    {
+      links.map((link) => (
+        <li>
+          <a
+            href={link.href}
+            {...(link.href.startsWith("http")
+              ? { target: "_blank", rel: "noopener noreferrer" }
+              : {})}
+            class="group grid gap-x-8 gap-y-1 border-b border-rule py-4 transition-colors hover:text-allow sm:grid-cols-[9rem_minmax(0,20rem)_minmax(0,1fr)] sm:items-baseline"
+          >
+            <span class="t-label">{link.name}</span>
+            <span class="t-ident text-muted transition-colors group-hover:text-allow">
+              {link.handle}
+            </span>
+            <span class="t-small text-muted">{link.note}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+
+  {/* The colophon. A listing ends by saying what produced it. */}
+  <div class="mt-16 grid gap-x-10 gap-y-6 border-t border-rule-strong pt-8 sm:grid-cols-2">
+    <div>
+      <p class="t-label text-muted">Currently</p>
+      <p class="t-small measure mt-2 text-muted">
+        Graduate research assistant at the {person.lab}, University of Idaho,
+        under {person.advisor}, on work sponsored by {person.funder} and the
+        State of Idaho. Ph.D. expected December 2026. Based in {person.location}.
+      </p>
+    </div>
+    <div>
+      <p class="t-label text-muted">About this page</p>
+      <p class="t-small measure mt-2 text-muted">
+        Built with Astro and Tailwind, set in IBM Plex. Every number on this
+        page comes from my dissertation or one of the papers above &mdash;
+        nothing is rounded up and no diagram is decorative. The policy engine
+        is the real one, running in your browser.
+      </p>
+    </div>
+  </div>
+</section>

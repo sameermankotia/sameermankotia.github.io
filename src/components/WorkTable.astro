@@ -1,0 +1,133 @@
+---
+/**
+ * .data — the public repositories.
+ *
+ * A symbol table, not a card grid. Each entry leads with the repository name
+ * as GitHub spells it, because that is the name a reader will search for, and
+ * the whole entry is a link to the source — the claim and the thing that
+ * substantiates it are one target.
+ *
+ * Grouped into three tracks rather than ranked, since a replication package
+ * and a CI tool are not better or worse than each other, they are different
+ * kinds of evidence.
+ */
+import { entries, tracks } from "@/data/work";
+---
+
+<section id="data" data-section=".data" class="scroll-mt-24 pt-24 sm:pt-32">
+  <div class="sect-head">
+    <h2 class="t-headline shrink-0">.data</h2>
+    <p class="t-label text-muted">Public repositories</p>
+    <p class="t-ident ml-auto text-muted">{entries.length} of 45 selected</p>
+  </div>
+
+  <p class="t-body measure mt-6 text-muted">
+    Selected from the account by one test: does it carry a result someone could
+    check. The dissertation toolchain is not among them &mdash; that work is
+    sponsored and its source is not public, which is why it is the figure at
+    the top of this page and the policy section is it running.
+  </p>
+
+  {
+    tracks.map((track) => {
+      const rows = entries.filter((e) => e.track === track.id);
+      return (
+        <section class="mt-16">
+          <div class="flex flex-wrap items-baseline gap-x-5 gap-y-1 border-b border-rule-strong pb-2">
+            <h3 class="t-label shrink-0">{track.label}</h3>
+            <p class="t-ident ml-auto text-muted">{rows.length}</p>
+          </div>
+          <p class="t-small measure mt-3 text-muted">{track.note}</p>
+
+          <ol class="mt-4">
+            {rows.map((entry) => (
+              <li class="group relative grid gap-x-10 gap-y-3 border-b border-rule py-8 lg:grid-cols-[minmax(0,19rem)_minmax(0,1fr)]">
+                {/* Left column: the identifier and its facts. */}
+                <div>
+                  <h4 class="t-title break-words">
+                    {/* The repository name is the link, and its hit area is
+                        stretched over the row — the body text beside it is the
+                        largest thing a reader aims at, and it should lead
+                        where it looks like it leads. */}
+                    <a
+                      href={entry.repo}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="transition-colors after:absolute after:inset-0 group-hover:text-allow"
+                    >
+                      {entry.title ?? entry.symbol}
+                    </a>
+                  </h4>
+                  <p class="t-ident mt-1.5 text-muted">{entry.kind}</p>
+
+                  <dl class="mt-4 space-y-1.5">
+                    <div class="flex gap-3">
+                      <dt class="t-label w-12 shrink-0 text-muted">Repo</dt>
+                      <dd class="t-ident break-all text-muted">
+                        {entry.symbol}
+                      </dd>
+                    </div>
+                    {entry.paper && (
+                      <div class="flex gap-3">
+                        <dt class="t-label w-12 shrink-0 text-muted">Paper</dt>
+                        <dd class="t-ident text-allow">{entry.paper}</dd>
+                      </div>
+                    )}
+                    {entry.demo && (
+                      <div class="flex gap-3">
+                        <dt class="t-label w-12 shrink-0 text-muted">Live</dt>
+                        {/* Raised above the stretched overlay so this second
+                            destination stays clickable inside a linked row. */}
+                        <dd class="t-ident relative z-10">
+                          <a
+                            href={entry.demo}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="underline decoration-rule-strong underline-offset-4 transition-colors hover:text-allow"
+                          >
+                            view report
+                          </a>
+                        </dd>
+                      </div>
+                    )}
+                  </dl>
+                </div>
+
+                <div>
+                  <p class="t-body measure text-muted">{entry.body}</p>
+
+                  {entry.metric && (
+                    <p class="mt-5 border-l-2 border-allow pl-4">
+                      <span class="t-title block text-allow">
+                        {entry.metric.value}
+                      </span>
+                      <span class="t-small text-muted">{entry.metric.of}</span>
+                    </p>
+                  )}
+
+                  <ul class="mt-5 flex flex-wrap gap-x-2 gap-y-1.5">
+                    {entry.stack.map((tool) => (
+                      <li class="t-ident border border-rule px-2 py-1 text-muted">
+                        {tool}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
+      );
+    })
+  }
+
+  <p class="t-small mt-10 text-muted">
+    <a
+      href="https://github.com/sameermankotia?tab=repositories"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="underline decoration-rule-strong underline-offset-4 transition-colors hover:text-allow"
+      >All 45 repositories on GitHub</a
+    >
+  </p>
+</section>

@@ -1,0 +1,314 @@
+---
+/**
+ * .policy_meta — the policy table, queryable.
+ *
+ * A portfolio can describe a contribution or it can hand it over. This runs
+ * the real matching logic from the dissertation on the real eleven-rule
+ * sensor case study, in the visitor's browser, and shows the decision and the
+ * reason for it. There is no server and no model behind it: it is a prefix
+ * comparison, which is the entire claim.
+ *
+ * The second preset is the exploit from §3.4.5 — a hijacked `calibrate`
+ * attempting a write it was never granted. Watching the table fail to cover
+ * it is a better argument for deny-by-default than a paragraph.
+ */
+import { subjects, objects, actions, rules, presets } from "@/data/policy";
+---
+
+<section
+  id="policy_meta"
+  data-section=".policy_meta"
+  class="scroll-mt-24 pt-24 sm:pt-32"
+>
+  <div class="sect-head">
+    <h2 class="t-headline shrink-0">.policy_meta</h2>
+    <p class="t-label text-muted">Query the table</p>
+    {/* Scoped to what this demo actually covers. The paper's 7,381 counts the
+        compiler's derived type categories too, and printing it here would
+        imply the selects below reach them. */}
+    <p class="t-ident ml-auto text-muted">
+      {rules.length} rules · {subjects.length} functions · {objects.length} globals
+    </p>
+  </div>
+
+  <p class="t-body measure mt-6 text-muted">
+    Here is the actual policy engine from my dissertation, running in your
+    browser. The example is a sensor monitoring system: eight functions split
+    into three roles, nine variables, and eleven rules saying who may touch
+    what.
+  </p>
+
+  <p class="t-body measure mt-4 text-muted">
+    Pick a function, pick read or write, pick a variable. It will tell you
+    whether that is allowed and show you which rule decided it &mdash; or that
+    no rule covered it, which means blocked. <strong class="text-ink"
+      >Try the second button below</strong
+    >: that is a real attack, where a function that is only allowed to read a
+    value gets hijacked into trying to overwrite it.
+  </p>
+
+  <!-- Presets. A first visitor should see a verdict, not three empty selects. -->
+  <div class="mt-8 flex flex-wrap gap-2">
+    {
+      presets.map((preset, i) => (
+        <button
+          type="button"
+          data-preset={i}
+          class="t-ident border border-rule px-3 py-2 text-left transition-colors hover:border-rule-strong hover:text-allow aria-[current=true]:border-allow aria-[current=true]:text-allow"
+        >
+          {preset.title}
+        </button>
+      ))
+    }
+  </div>
+
+  <p class="t-small mt-3 min-h-[1.5rem] text-muted" data-preset-blurb></p>
+
+  <!-- The query. Three selects, one per tree, each showing its binary label. -->
+  <div class="mt-6 grid gap-px border border-rule bg-rule md:grid-cols-[1fr_auto_1fr]">
+    <label class="block bg-ground p-4">
+      <span class="t-label text-muted">Subject · who is acting</span>
+      <select
+        id="q-subject"
+        class="t-ident mt-2 w-full cursor-pointer border border-rule bg-ground px-2.5 py-2 text-ink"
+      >
+        {
+          subjects.map((s) => (
+            <option value={s.fn}>
+              {s.fn}() — {s.group} [{s.label}]
+            </option>
+          ))
+        }
+      </select>
+    </label>
+
+    <label class="block bg-ground p-4">
+      <span class="t-label text-muted">Action</span>
+      <select
+        id="q-action"
+        class="t-ident mt-2 w-full cursor-pointer border border-rule bg-ground px-2.5 py-2 text-ink md:w-auto"
+      >
+        {
+          actions.map((a) => (
+            <option value={a.verb}>
+              {a.verb} [{a.label}]
+            </option>
+          ))
+        }
+      </select>
+    </label>
+
+    <label class="block bg-ground p-4">
+      <span class="t-label text-muted">Object · what is touched</span>
+      <select
+        id="q-object"
+        class="t-ident mt-2 w-full cursor-pointer border border-rule bg-ground px-2.5 py-2 text-ink"
+      >
+        {
+          objects.map((o) => (
+            <option value={o.variable}>
+              {o.variable} — {o.group} [{o.label}]
+            </option>
+          ))
+        }
+      </select>
+    </label>
+  </div>
+
+  <!-- The verdict, and the reason for it. -->
+  <div
+    class="mt-px grid gap-px border border-rule bg-rule lg:grid-cols-[minmax(14rem,auto)_1fr]"
+  >
+    <div
+      class="flex flex-col justify-center gap-1 bg-ground p-5"
+      data-verdict-cell
+    >
+      <span class="t-label text-muted">Decision</span>
+      <output
+        class="t-headline block"
+        id="verdict"
+        for="q-subject q-action q-object"
+        aria-live="polite"></output>
+      <span class="t-ident text-muted" data-query-triple></span>
+    </div>
+    <div class="bg-ground p-5">
+      <span class="t-label text-muted">Why</span>
+      <p class="t-small mt-2" data-reason></p>
+    </div>
+  </div>
+
+  <!-- The table itself. The covering rule is marked in place, so the match is
+       something a reader watches happen rather than takes on trust. -->
+  <div class="mt-10 overflow-x-auto">
+    <table class="w-full border-collapse text-left">
+      <caption class="t-label pb-3 text-left text-muted">
+        The policy table · #pragma default_policy deny
+      </caption>
+      <thead>
+        <tr class="border-b border-rule-strong">
+          <th scope="col" class="t-label py-2 pr-4 font-semibold">#</th>
+          <th scope="col" class="t-label py-2 pr-4 font-semibold">Subject</th>
+          <th scope="col" class="t-label py-2 pr-4 font-semibold">Object</th>
+          <th scope="col" class="t-label py-2 pr-4 font-semibold">Action</th>
+          <th scope="col" class="t-label py-2 pr-4 font-semibold">Intent</th>
+          <th scope="col" class="t-label py-2 font-semibold">Match</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          rules.map((rule, i) => (
+            <tr
+              data-rule={i}
+              class="border-b border-rule-faint transition-colors data-[hit]:text-allow"
+            >
+              <td class="t-ident py-2 pr-4 text-muted">
+                {String(i).padStart(2, "0")}
+              </td>
+              <td class="t-ident py-2 pr-4">{rule.subject}</td>
+              <td class="t-ident py-2 pr-4">{rule.object}</td>
+              <td class="t-ident py-2 pr-4">{rule.action}</td>
+              <td class="t-ident py-2 pr-4 text-muted">{rule.intent}</td>
+              <td class="t-ident py-2" data-cell="match" />
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <p class="t-small measure mt-6 text-muted">
+    Eleven rules do the work of 216, because a rule written for a whole group
+    automatically covers every function in it. That is what makes the table
+    small enough to sit in a cache on a tiny embedded chip &mdash; and because
+    every check is just a prefix comparison, adding more rules never makes it
+    slower.
+  </p>
+</section>
+
+<script>
+  import {
+    subjects,
+    objects,
+    actions,
+    rules,
+    presets,
+    evaluate,
+    matchLabel,
+  } from "@/data/policy";
+
+  const subjectSel = document.getElementById("q-subject") as HTMLSelectElement;
+  const actionSel = document.getElementById("q-action") as HTMLSelectElement;
+  const objectSel = document.getElementById("q-object") as HTMLSelectElement;
+  const verdict = document.getElementById("verdict");
+  const reason = document.querySelector<HTMLElement>("[data-reason]");
+  const triple = document.querySelector<HTMLElement>("[data-query-triple]");
+  const cell = document.querySelector<HTMLElement>("[data-verdict-cell]");
+  const blurb = document.querySelector<HTMLElement>("[data-preset-blurb]");
+  const rows = [...document.querySelectorAll<HTMLTableRowElement>("[data-rule]")];
+  const presetBtns = [
+    ...document.querySelectorAll<HTMLButtonElement>("[data-preset]"),
+  ];
+
+  if (subjectSel && actionSel && objectSel && verdict) {
+    const relation = (kind: "exact" | "ancestor" | "none") =>
+      kind === "exact" ? "≡" : kind === "ancestor" ? "⊃" : "—";
+
+    const run = () => {
+      const subject = subjects.find((s) => s.fn === subjectSel.value)!;
+      const action = actions.find((a) => a.verb === actionSel.value)!;
+      const object = objects.find((o) => o.variable === objectSel.value)!;
+
+      const decision = evaluate(subject.label, object.label, action.label);
+
+      verdict.textContent = decision.allowed ? "ALLOW" : "DENY";
+      verdict.className = `t-headline block ${
+        decision.allowed ? "text-allow" : "text-deny"
+      }`;
+      if (cell) {
+        cell.style.borderLeft = `3px solid ${
+          decision.allowed ? "var(--allow)" : "var(--deny)"
+        }`;
+      }
+      if (triple) {
+        triple.textContent = `(${subject.label}, ${object.label}, ${action.label})`;
+      }
+
+      // Mark the covering rule in place, and state each column's relationship
+      // so a reader can check the ancestry rather than trust the verdict.
+      for (const row of rows) {
+        const i = Number(row.dataset.rule);
+        const hit = i === decision.ruleIndex;
+        const matchCell = row.querySelector<HTMLElement>("[data-cell=match]");
+        if (hit) row.setAttribute("data-hit", "");
+        else row.removeAttribute("data-hit");
+        if (matchCell) {
+          matchCell.textContent = hit
+            ? `${relation(decision.subjectMatch)} ${relation(decision.objectMatch)} ${relation(decision.actionMatch)}`
+            : "";
+        }
+      }
+
+      if (!reason) return;
+
+      if (decision.allowed) {
+        const rule = rules[decision.ruleIndex]!;
+        const parts = [
+          decision.subjectMatch === "exact"
+            ? `subject ${rule.subject} matches ${subject.label} exactly`
+            : `subject ${rule.subject} is an ancestor of ${subject.label}, so the rule written for ${subject.group} covers ${subject.fn}()`,
+          decision.objectMatch === "exact"
+            ? `object ${rule.object} matches ${object.label} exactly`
+            : `object ${rule.object} is an ancestor of ${object.label}, so it covers every variable in ${object.group}`,
+          `action ${rule.action} is ${action.verb}`,
+        ];
+        reason.textContent = `Rule ${String(decision.ruleIndex).padStart(2, "0")} covers all three columns: ${parts.join("; ")}. Access proceeds to memory.`;
+        return;
+      }
+
+      // A denial is more useful when it says how close the query came. The
+      // near-miss is the rule that covered subject and object but not the
+      // action — almost always a read rule being asked for a write.
+      const near = rules.findIndex(
+        (r) =>
+          matchLabel(r.subject, subject.label) !== "none" &&
+          matchLabel(r.object, object.label) !== "none",
+      );
+      const tail =
+        near === -1
+          ? `No rule connects ${subject.group} to ${object.group} at all.`
+          : `Rule ${String(near).padStart(2, "0")} grants ${subject.group} ${
+              rules[near]!.action === "111" ? "read" : "write"
+            } on ${object.group}, but there is no ${action.verb} rule.`;
+
+      reason.textContent = `No entry covers (${subject.label}, ${object.label}, ${action.label}). ${tail} The default is deny, so ${subject.fn}() is stopped before the access reaches memory and an exception is raised.`;
+    };
+
+    const clearPresets = () => {
+      for (const b of presetBtns) b.removeAttribute("aria-current");
+      if (blurb) blurb.textContent = "";
+    };
+
+    for (const select of [subjectSel, actionSel, objectSel]) {
+      select.addEventListener("change", () => {
+        clearPresets();
+        run();
+      });
+    }
+
+    for (const button of presetBtns) {
+      button.addEventListener("click", () => {
+        const preset = presets[Number(button.dataset.preset)]!;
+        subjectSel.value = preset.fn;
+        actionSel.value = preset.verb;
+        objectSel.value = preset.variable;
+        clearPresets();
+        button.setAttribute("aria-current", "true");
+        if (blurb) blurb.textContent = preset.blurb;
+        run();
+      });
+    }
+
+    // Open on the first preset, so the resting state is a worked example.
+    presetBtns[0]?.click();
+  }
+</script>

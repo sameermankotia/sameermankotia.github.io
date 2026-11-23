@@ -1,0 +1,63 @@
+---
+import "@/styles/global.css";
+import StatusBar from "@/components/StatusBar.astro";
+import AddressRail from "@/components/AddressRail.astro";
+import { person } from "@/data/site";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = `${person.name} — ${person.role}`,
+  description = "Ph.D. candidate building a toolchain that carries security policy from C source code to enforcement on every RISC-V instruction, and AI systems that verify the code they produce.",
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site ?? "http://localhost");
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical.href} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical.href} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    {/* The mode is resolved before first paint. Running this in <head> rather
+        than as a module means the class is on <html> when the first styles
+        apply, so neither rendering flashes before the other. */}
+    <script is:inline>
+      (() => {
+        try {
+          const stored = localStorage.getItem("mode");
+          const runtime = stored
+            ? stored === "runtime"
+            : window.matchMedia("(prefers-color-scheme: dark)").matches;
+          if (runtime) document.documentElement.classList.add("runtime");
+        } catch {
+          // Storage can be refused outright. Source is the resting state —
+          // the file before anything runs — so doing nothing lands there.
+        }
+      })();
+    </script>
+  </head>
+
+  <body>
+    <a href="#main" class="skip-link t-label">Skip to content</a>
+    <StatusBar />
+    <AddressRail />
+    <main id="main" class="page listing">
+      <slot />
+    </main>
+  </body>
+</html>

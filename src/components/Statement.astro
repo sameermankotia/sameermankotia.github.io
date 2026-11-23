@@ -1,0 +1,73 @@
+---
+/**
+ * The opening claim.
+ *
+ * Both halves of the work are the same instinct: policy enforced on every
+ * instruction, and AI output that does not ship until something checked it.
+ * The statement names that instinct, then hands over something the visitor
+ * can check without leaving the page.
+ *
+ * Written to be read by someone who does not know what an ELF section is.
+ * The jargon that remains is named the first time it is used.
+ */
+import { person, dissertation } from "@/data/site";
+import { papers } from "@/data/publications";
+
+// Counted from the record rather than typed in, so the headline number cannot
+// drift away from the list further down the page.
+const settled = papers.filter((p) => p.status !== "under review").length;
+const reviewing = papers.length - settled;
+---
+
+<section id="text" data-section=".text" class="scroll-mt-24">
+  <p class="t-label text-muted">{person.line}</p>
+
+  <h1 class="t-display mt-6 max-w-[22ch]">
+    Nothing is trusted until it is checked.
+  </h1>
+
+  <p class="t-body measure mt-7 text-muted">
+    I build tools that check their own output. My Ph.D. work takes a security
+    rule written in plain C code and carries it all the way into the compiled
+    program, so the processor enforces it on every single instruction. My other
+    work puts AI agents to work writing firmware and refuses to merge a line of
+    it without evidence that it is correct.
+  </p>
+
+  <p class="t-body measure mt-5 text-muted">
+    The diagram below is my dissertation, drawn from its own source code. The
+    access-control rules it enforces are
+    <a
+      href="#policy_meta"
+      class="text-ink underline decoration-rule-strong underline-offset-4 transition-colors hover:text-allow"
+      >running further down this page</a
+    >, so you can try them yourself rather than take my word for it.
+  </p>
+
+  <!-- The three facts a reader needs before deciding to keep going. -->
+  <dl
+    class="mt-10 grid gap-px border-y border-rule-strong bg-rule sm:grid-cols-3"
+  >
+    <div class="bg-ground py-5 pr-6">
+      <dt class="t-label text-muted">Dissertation</dt>
+      <dd class="t-title mt-2 text-allow">{dissertation.degree}</dd>
+      <dd class="t-small mt-1 text-muted">
+        {dissertation.short} — expected {dissertation.expected}
+      </dd>
+    </div>
+    <div class="bg-ground py-5 pr-6 sm:pl-6">
+      <dt class="t-label text-muted">Speed of the check</dt>
+      <dd class="t-title mt-2">O(1), always</dd>
+      <dd class="t-small mt-1 text-muted">
+        The same cost whether there are ten rules or ten thousand
+      </dd>
+    </div>
+    <div class="bg-ground py-5 pr-6 sm:pl-6">
+      <dt class="t-label text-muted">Papers</dt>
+      <dd class="t-title mt-2">{settled} published or accepted</dd>
+      <dd class="t-small mt-1 text-muted">
+        Plus {reviewing} under review, across IEEE, ACM and MDPI
+      </dd>
+    </div>
+  </dl>
+</section>

@@ -1,0 +1,474 @@
+@import "tailwindcss";
+
+/* Faces are declared here rather than imported from Fontsource's bundles,
+   which ship Cyrillic, Greek and Vietnamese subsets at every weight. Those
+   never download — unicode-range sees to that — but they are 26 files in the
+   build output for a page written in English. Latin and Latin Extended are
+   what this site sets, so they are what it carries.
+
+   Sans is the variable face across its weight axis; mono is static, because
+   only four weights are ever asked for and four static cuts are smaller than
+   one variable file. Both swap, so text is readable before the face lands. */
+
+@font-face {
+  font-family: "IBM Plex Sans Var";
+  src: url("@fontsource-variable/ibm-plex-sans/files/ibm-plex-sans-latin-wght-normal.woff2")
+    format("woff2-variations");
+  font-weight: 100 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "IBM Plex Sans Var";
+  src: url("@fontsource-variable/ibm-plex-sans/files/ibm-plex-sans-latin-ext-wght-normal.woff2")
+    format("woff2-variations");
+  font-weight: 100 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020,
+    U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-400-normal.woff2")
+    format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-500-normal.woff2")
+    format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-600-normal.woff2")
+    format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-700-normal.woff2")
+    format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@custom-variant dark (&:where(.runtime, .runtime *));
+
+/* ==========================================================================
+   THE LISTING — token layer
+
+   The conceit is an object file, not a drawing. A compiled binary carries its
+   own code, its own data, and — in this toolchain — its own access-control
+   policy, each in a named section. The page is laid out the same way: the
+   sections are real ELF section names and the addresses in the left rail are
+   the base addresses the UICC compiler actually assigns.
+
+   Two modes, named after the thing the dissertation spans. SOURCE is the file
+   on disk before anything runs. RUNTIME is the same program executing under
+   enforcement. Neither is the other inverted — the accent in SOURCE is an
+   ink-weight emerald that has to hold up as small label text on near-white;
+   in RUNTIME it is a phosphor green that belongs to an instrument readout.
+   ========================================================================== */
+
+:root {
+  color-scheme: light;
+
+  --font-sans: "IBM Plex Sans Var", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* SOURCE — the file on disk.
+     Contrast on --ground: ink 15.9:1, muted 5.9:1, allow 6.1:1, deny 6.6:1. */
+  --ground: #faf9f7;
+  --raised: #f2f1ed;
+  --ink: #14181b;
+  --muted: #5d656d;
+  --allow: #0c6b52;
+  --deny: #a1301f;
+}
+
+.runtime {
+  color-scheme: dark;
+
+  /* RUNTIME — the program executing.
+     Contrast on --ground: ink 14.6:1, muted 5.6:1, allow 9.8:1, deny 6.3:1. */
+  --ground: #0e1215;
+  --raised: #161c20;
+  --ink: #e3e7e5;
+  --muted: #8a99a3;
+  --allow: #4fd39b;
+  --deny: #ff7a68;
+}
+
+:root,
+.runtime {
+  /* Rules. A listing is ruled, not boxed: most separations are a single
+     hairline and only a named boundary gets weight. */
+  --rule: color-mix(in oklab, var(--ink) 14%, var(--ground));
+  --rule-strong: color-mix(in oklab, var(--ink) 34%, var(--ground));
+  --rule-faint: color-mix(in oklab, var(--ink) 7%, var(--ground));
+
+  /* Figure strokes. Three, not five: a wire carries flow, a ghost wire is a
+     path that exists but is not taken, and a bound is an ownership edge. */
+  --wire: color-mix(in oklab, var(--ink) 62%, var(--ground));
+  --wire-ghost: color-mix(in oklab, var(--ink) 34%, var(--ground));
+  --bound: color-mix(in oklab, var(--ink) 22%, var(--ground));
+
+  --w-wire: 1.75px;
+  --w-ghost: 1.25px;
+  --w-bound: 1px;
+  --dash-ghost: 5 4;
+  --dash-bound: 2 5;
+
+  /* Page geometry. The address rail is a real column on wide screens and
+     collapses below xl, so the measure is expressed once here. */
+  --rail-w: 13.5rem;
+  --bar-h: 3rem;
+  --pad-x: clamp(1.25rem, 4vw, 3.5rem);
+  --page-max: 86rem;
+}
+
+@theme inline {
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+
+  --color-ground: var(--ground);
+  --color-raised: var(--raised);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-allow: var(--allow);
+  --color-deny: var(--deny);
+  --color-rule: var(--rule);
+  --color-rule-strong: var(--rule-strong);
+  --color-rule-faint: var(--rule-faint);
+  --color-wire: var(--wire);
+
+  /* Square throughout. The only radius in this system is the full round on a
+     node dot, which is drawn as a circle rather than reached for here. */
+  --radius-*: initial;
+
+  /* No elevation. A listing is flat; depth would be a lie about the medium. */
+  --shadow-*: initial;
+  --drop-shadow-*: initial;
+  --text-shadow-*: initial;
+}
+
+@layer base {
+  * {
+    border-color: var(--rule);
+    min-width: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--bar-h) + 2rem);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--ground);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Focus is a bracket in the accent, matching the [label] notation the
+     figures use, rather than a generic ring. */
+  :focus-visible {
+    outline: 2px solid var(--allow);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background-color: var(--allow);
+    color: var(--ground);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  .skip-link {
+    position: fixed;
+    top: 0.5rem;
+    left: 0.5rem;
+    z-index: 90;
+    transform: translateY(-200%);
+    background: var(--ground);
+    color: var(--ink);
+    border: 2px solid var(--allow);
+    padding: 0.5rem 0.875rem;
+  }
+  .skip-link:focus {
+    transform: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Lettering.
+
+   Mono sets everything structural: the display line, every label, every
+   identifier, every address. Sans is reserved for running prose, which is the
+   only thing on this page a person reads in sentences rather than scans in
+   columns. The split is the same one a source listing makes.
+   -------------------------------------------------------------------------- */
+
+@utility t-display {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: clamp(2rem, 6.2vw, 4.75rem);
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+
+@utility t-headline {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: clamp(1.375rem, 2.6vw, 2rem);
+  line-height: 1.14;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+@utility t-title {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 1.0625rem;
+  line-height: 1.32;
+  letter-spacing: -0.015em;
+}
+
+@utility t-body {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 1.0625rem;
+  line-height: 1.68;
+  text-wrap: pretty;
+}
+
+@utility t-small {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+/* The label register: section headers, table headings, tags, the status bar.
+   Tabular figures throughout, because half of these are numbers in a column. */
+@utility t-label {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 0.6875rem;
+  line-height: 1.2;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Identifiers printed as themselves: addresses, binary labels, symbol names,
+   pragma text. Never uppercased — a symbol's case is part of the symbol. */
+@utility t-ident {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+
+@utility measure {
+  max-width: 68ch;
+}
+
+/* --------------------------------------------------------------------------
+   Page frame.
+   -------------------------------------------------------------------------- */
+
+@utility page {
+  margin-inline: auto;
+  max-width: var(--page-max);
+  padding-inline: var(--pad-x);
+}
+
+/* Content sits beside the rail on wide screens and under the bar always. */
+@utility listing {
+  padding-block-start: calc(var(--bar-h) + 2.5rem);
+  padding-block-end: 6rem;
+}
+
+@media (min-width: 80rem) {
+  .listing {
+    padding-inline-start: var(--rail-w);
+  }
+}
+
+/* A ruled section head: the ELF section name, what it holds, and a count. */
+@utility sect-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 1.25rem;
+  border-block-end: 1px solid var(--rule-strong);
+  padding-block-end: 0.75rem;
+}
+
+@layer components {
+  /* ------------------------------------------------------------------
+     Figures. Authored SVG, three stroke roles, all non-scaling so the
+     hierarchy survives a phone. A figure that scales its 1.75px wire down
+     to a hairline has stopped distinguishing anything.
+     ------------------------------------------------------------------ */
+  .fg-box,
+  .fg-wire,
+  .fg-ghost,
+  .fg-bound,
+  .fg-hatch line {
+    vector-effect: non-scaling-stroke;
+  }
+
+  .fg-box {
+    fill: none;
+    stroke: var(--wire);
+    stroke-width: var(--w-wire);
+  }
+
+  .fg-wire {
+    fill: none;
+    stroke: var(--wire);
+    stroke-width: var(--w-wire);
+  }
+
+  .fg-head {
+    fill: var(--wire);
+  }
+
+  /* The route taken only when a check fails. Real, but not the happy path. */
+  .fg-ghost {
+    fill: none;
+    stroke: var(--wire-ghost);
+    stroke-width: var(--w-ghost);
+    stroke-dasharray: var(--dash-ghost);
+  }
+
+  /* An ownership edge: where the compiler stops and the simulator begins. */
+  .fg-bound {
+    fill: none;
+    stroke: var(--bound);
+    stroke-width: var(--w-bound);
+    stroke-dasharray: var(--dash-bound);
+  }
+
+  .fg-fill {
+    fill: var(--raised);
+    stroke: none;
+  }
+
+  .fg-name {
+    fill: var(--ink);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 600;
+    text-anchor: middle;
+  }
+
+  .fg-sub {
+    fill: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-anchor: middle;
+  }
+
+  .fg-zone {
+    fill: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    text-anchor: start;
+  }
+
+  /* The callout. Not a circled numeral on a leader — a bracketed binary
+     label, set the way BHPol writes one, sitting directly on its part. */
+  .fg-tag rect {
+    fill: var(--ground);
+    stroke: var(--wire-ghost);
+    stroke-width: 1px;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .fg-tag text {
+    fill: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-anchor: middle;
+  }
+
+  /* Interaction. One part is live at a time, which is what keeps a single
+     accent meaning "this one". Parts are pointer targets; wires are not,
+     or a hit area would lie across half the figure. */
+  .fg-part {
+    cursor: pointer;
+    pointer-events: all;
+    transition:
+      stroke 140ms ease,
+      fill 140ms ease;
+  }
+
+  .fg-wire,
+  .fg-ghost,
+  .fg-bound,
+  .fg-hatch {
+    pointer-events: none;
+  }
+
+  .fg-part[data-live] .fg-box,
+  .fg-part[data-live] .fg-tag rect {
+    stroke: var(--allow);
+  }
+
+  .fg-part[data-live] .fg-name,
+  .fg-part[data-live] .fg-sub,
+  .fg-part[data-live] .fg-tag text {
+    fill: var(--allow);
+  }
+
+  .fg-part[data-live] .fg-fill {
+    fill: color-mix(in oklab, var(--allow) 12%, var(--ground));
+  }
+}

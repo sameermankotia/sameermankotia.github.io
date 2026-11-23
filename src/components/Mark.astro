@@ -1,0 +1,54 @@
+---
+/**
+ * The mark: a two-level binary tree with one path resolved.
+ *
+ * It is the BHPol match drawn as a glyph — a root, two descendants, and the
+ * one branch the query actually took filled in. That is the whole idea of the
+ * policy model in four strokes and three dots, which is more use as an
+ * identity than a monogram would be, and it survives being 20px in a bar.
+ *
+ * No initials. A mark built from the work says more than one built from a name.
+ */
+interface Props {
+  class?: string;
+  /** Supply where no adjacent text names him; omit where the name is already set. */
+  title?: string;
+}
+
+const { class: className, title } = Astro.props;
+
+// `as const` so `role` narrows to the AriaRole literal rather than widening
+// to string, which the SVG attribute type will not accept.
+const a11y = title
+  ? ({ role: "img", "aria-label": title } as const)
+  : ({ "aria-hidden": "true", focusable: "false" } as const);
+---
+
+<svg viewBox="0 0 24 24" fill="none" class={className} {...a11y}>
+  {/* Edges. The right branch is the matched path and takes the accent. */}
+  <path
+    d="M12 6.5 L5 13.5"
+    stroke="currentColor"
+    stroke-width="1.75"
+    stroke-linecap="square"
+    opacity="0.45"
+  />
+  <path
+    d="M12 6.5 L19 13.5"
+    stroke="var(--allow)"
+    stroke-width="1.75"
+    stroke-linecap="square"
+  />
+  {/* Root, then the two descendants. The matched leaf is filled solid. */}
+  <rect x="9.25" y="2.25" width="5.5" height="5.5" fill="currentColor" />
+  <rect
+    x="2.25"
+    y="13.25"
+    width="5.5"
+    height="5.5"
+    stroke="currentColor"
+    stroke-width="1.5"
+    opacity="0.45"
+  />
+  <rect x="16.25" y="13.25" width="5.5" height="5.5" fill="var(--allow)" />
+</svg>

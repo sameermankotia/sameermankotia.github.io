@@ -1,0 +1,174 @@
+---
+/**
+ * FIG. 1, assembled: the plate, its readout, and the step table.
+ *
+ * The table is the figure's accessible structure, not a caption bolted on.
+ * Each row is a real button carrying its own note, so the whole figure is
+ * reachable by keyboard and readable by speech without the SVG participating
+ * at all — which is why the plate can stay aria-hidden.
+ *
+ * Below md the plate is not drawn. A 1200-unit figure on a phone renders its
+ * 13px lettering at about four, and a second hand-drawn tall plate would be a
+ * second thing to keep true. The table is already a vertical trace of the same
+ * pipeline, so on a phone it simply *is* the figure, with the connector column
+ * drawn in type.
+ */
+import ToolchainPlate from "./ToolchainPlate.astro";
+import { steps, figureDescription } from "@/data/toolchain";
+import { person, dissertation } from "@/data/site";
+---
+
+<figure class="mt-12 sm:mt-16" data-figure>
+  <p class="sr-only">{figureDescription}</p>
+
+  <div class="hidden md:block">
+    <ToolchainPlate />
+  </div>
+
+  <figcaption
+    class="mt-6 border-t border-rule-strong pt-4 md:mt-8"
+  >
+    <div class="flex flex-wrap items-baseline gap-x-5 gap-y-1">
+      <span class="t-label shrink-0">Fig. 1 — my dissertation</span>
+      <span class="t-label text-muted">{dissertation.degree}, {person.lab}</span>
+    </div>
+    <p class="t-small measure mt-2 text-muted">{dissertation.title}</p>
+  </figcaption>
+
+  {/* The readout. Holds an instruction at rest, so the resting state still
+      says something rather than reserving blank height. */}
+  <p
+    class="t-body measure mt-5 min-h-[7.5rem] text-muted sm:min-h-[6rem]"
+    data-readout
+    aria-live="polite"
+  >
+    Twelve steps, split in two: the left half happens when the program is
+    compiled, the right half while it runs. Click any step to read what it
+    does.
+  </p>
+
+  {/* The step table. Two columns on wide screens, split where the artifact
+      does: compile time on the left, runtime on the right. */}
+  <div class="mt-8 grid gap-x-10 gap-y-8 lg:grid-cols-2">
+    {
+      (["compile", "runtime"] as const).map((side) => (
+        <div>
+          <p class="t-label border-b border-rule pb-2 text-muted">
+            {side === "compile"
+              ? "Compile time · UICC"
+              : "Runtime · FlexSiMArch"}
+          </p>
+          <ul>
+            {steps
+              .filter((s) => s.side === side)
+              .map((step) => (
+                <li>
+                  <button
+                    type="button"
+                    data-step-btn={step.step}
+                    data-note={step.note}
+                    class="group flex w-full items-baseline gap-3 border-b border-rule-faint py-2.5 text-left transition-colors hover:text-allow aria-[current=true]:text-allow"
+                  >
+                    <span class="t-ident shrink-0 text-muted transition-colors group-hover:text-allow group-aria-[current=true]:text-allow">
+                      [{step.step}]
+                    </span>
+                    <span class="t-ident font-semibold">{step.name}</span>
+                    <span class="t-ident ml-auto hidden shrink-0 text-right text-muted sm:block">
+                      {step.component}
+                    </span>
+                    {/* In the DOM for every row, so speech gets the note on
+                        focus rather than only from the visual readout. */}
+                    <span class="sr-only">. {step.note}</span>
+                  </button>
+                </li>
+              ))}
+          </ul>
+        </div>
+      ))
+    }
+  </div>
+</figure>
+
+<script>
+  /**
+   * One step is live at a time. Pointing previews it; clicking pins it, so the
+   * reading survives the pointer leaving. Without that split, a click lands on
+   * a row hover has already lit and reads as switching it off.
+   */
+  const figure = document.querySelector<HTMLElement>("[data-figure]");
+  if (figure) {
+    const readout = figure.querySelector<HTMLElement>("[data-readout]");
+    const buttons = [
+      ...figure.querySelectorAll<HTMLButtonElement>("[data-step-btn]"),
+    ];
+    const parts = [...figure.querySelectorAll<SVGGElement>("[data-step]")];
+    const resting = readout?.innerHTML ?? "";
+
+    let pinned: string | null = null;
+    let pointed: string | null = null;
+
+    const render = () => {
+      const live = pointed ?? pinned;
+
+      for (const part of parts) {
+        if (part.dataset.step === live) part.setAttribute("data-live", "");
+        else part.removeAttribute("data-live");
+      }
+
+      for (const button of buttons) {
+        const match = button.dataset.stepBtn === live;
+        if (match) button.setAttribute("aria-current", "true");
+        else button.removeAttribute("aria-current");
+        button.setAttribute(
+          "aria-pressed",
+          String(button.dataset.stepBtn === pinned),
+        );
+      }
+
+      if (!readout) return;
+      if (!live) {
+        readout.innerHTML = resting;
+        readout.classList.add("text-muted");
+        return;
+      }
+      const source = buttons.find((b) => b.dataset.stepBtn === live);
+      const name = source?.querySelector("span:nth-child(2)")?.textContent ?? "";
+      readout.classList.remove("text-muted");
+      readout.textContent = "";
+      const tag = document.createElement("span");
+      tag.className = "t-ident font-semibold text-allow";
+      tag.textContent = `[${live}] ${name}. `;
+      readout.append(tag, source?.dataset.note ?? "");
+    };
+
+    const point = (step: string | null) => {
+      pointed = step;
+      render();
+    };
+
+    const take = (step: string) => {
+      pinned = pinned === step ? null : step;
+      render();
+    };
+
+    for (const button of buttons) {
+      const step = button.dataset.stepBtn!;
+      button.addEventListener("pointerenter", () => point(step));
+      button.addEventListener("pointerleave", () => point(null));
+      button.addEventListener("focus", () => point(step));
+      button.addEventListener("blur", () => point(null));
+      button.addEventListener("click", () => take(step));
+    }
+
+    // The plate reports the same two gestures, so a part behaves identically
+    // whether it is picked off the drawing or out of the table.
+    for (const part of parts) {
+      const step = part.dataset.step!;
+      part.addEventListener("pointerenter", () => point(step));
+      part.addEventListener("pointerleave", () => point(null));
+      part.addEventListener("click", () => take(step));
+    }
+
+    render();
+  }
+</script>

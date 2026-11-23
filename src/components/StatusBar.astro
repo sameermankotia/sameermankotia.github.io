@@ -1,0 +1,130 @@
+---
+/**
+ * The status bar: the strip a debugger keeps pinned while the program scrolls.
+ *
+ * It carries identity, the section map, and the mode control. It sits at the
+ * top rather than the foot because that is where a loaded-object header sits,
+ * and because the address rail it hands off to runs down the left edge
+ * beneath it — the two read as one piece of instrumentation.
+ */
+import Mark from "./Mark.astro";
+import { person, sections } from "@/data/site";
+---
+
+<header
+  class="fixed inset-x-0 top-0 z-50 h-(--bar-h) border-b border-rule bg-ground/92 backdrop-blur-sm"
+>
+  <div class="page flex h-full items-stretch gap-4">
+    <a
+      href="/"
+      class="group -ml-1 flex shrink-0 items-center gap-2.5 px-1 transition-colors hover:text-allow"
+    >
+      <Mark class="h-5 w-5" title={`${person.name}, home`} />
+      <span class="t-label hidden whitespace-nowrap sm:inline">
+        {person.name}
+      </span>
+    </a>
+
+    <div class="flex-1"></div>
+
+    <nav aria-label="Sections" class="hidden items-stretch md:flex">
+      {
+        sections.map((section) => (
+          <a
+            href={`#${section.id.slice(1)}`}
+            data-rail-link={section.id}
+            class="t-ident flex items-center px-2.5 text-muted transition-colors hover:text-ink aria-[current=true]:text-allow lg:px-3"
+          >
+            {section.id}
+          </a>
+        ))
+      }
+    </nav>
+
+    {/* Mode. The dissertation spans source code to runtime execution, so the
+        two renderings of this page are named for its two ends. */}
+    <button
+      type="button"
+      id="mode-toggle"
+      class="flex shrink-0 items-center gap-2 border-l border-rule pl-3 transition-colors hover:text-allow sm:pl-4"
+      aria-label="Switch rendering mode"
+    >
+      <span class="t-label hidden text-muted sm:inline">Mode</span>
+      <span
+        class="t-ident min-w-[7ch] text-left font-semibold tracking-[0.1em] uppercase"
+        data-mode-name>&nbsp;</span
+      >
+    </button>
+  </div>
+</header>
+
+<script>
+  // The resolved mode is unknowable before hydration, so the field is blank in
+  // markup and filled here rather than printing the wrong one and correcting
+  // it. Its width is reserved so the bar does not reflow when the value lands.
+  const root = document.documentElement;
+  const field = document.querySelector<HTMLElement>("[data-mode-name]");
+  const button = document.getElementById("mode-toggle");
+
+  const paint = () => {
+    const runtime = root.classList.contains("runtime");
+    if (field) field.textContent = runtime ? "Runtime" : "Source";
+    button?.setAttribute(
+      "aria-label",
+      `Switch to ${runtime ? "source" : "runtime"} mode`,
+    );
+  };
+
+  button?.addEventListener("click", () => {
+    const runtime = root.classList.toggle("runtime");
+    try {
+      localStorage.setItem("mode", runtime ? "runtime" : "source");
+    } catch {
+      // A browser refusing storage is not a reason to refuse the toggle; the
+      // choice simply does not survive the page.
+    }
+    paint();
+  });
+
+  paint();
+
+  /**
+   * Section tracking. The bar and the rail point at the same section, so the
+   * observer marks both from one place.
+   *
+   * The margin box is pulled in from the top by the bar's own height and up
+   * from the bottom so that a section counts as current while it occupies the
+   * upper band of the viewport, not merely while any part of it is on screen —
+   * otherwise the last short section never becomes current.
+   */
+  const targets = [...document.querySelectorAll<HTMLElement>("[data-section]")];
+  const links = [...document.querySelectorAll<HTMLElement>("[data-rail-link]")];
+
+  if (targets.length && links.length) {
+    let current = "";
+
+    const mark = (id: string) => {
+      if (id === current) return;
+      current = id;
+      for (const link of links) {
+        const match = link.dataset.railLink === id;
+        if (match) link.setAttribute("aria-current", "true");
+        else link.removeAttribute("aria-current");
+      }
+    };
+
+    const observer = new IntersectionObserver(
+      (records) => {
+        // Several sections can straddle the band at once; the topmost of those
+        // currently intersecting is the one being read.
+        const visible = records
+          .filter((r) => r.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        if (visible[0]) mark(visible[0].target.getAttribute("data-section")!);
+      },
+      { rootMargin: "-20% 0px -60% 0px", threshold: 0 },
+    );
+
+    for (const target of targets) observer.observe(target);
+  }
+</script>
