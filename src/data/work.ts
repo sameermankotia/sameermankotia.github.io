@@ -1,17 +1,19 @@
 /**
- * .data — the public repositories, as entries in a symbol table.
+ * .data — things built, as entries in a symbol table.
  *
- * Selected from 45 repositories on the account. The cut is: does it carry a
- * result someone could check? Six of these are the replication packages for
- * papers, and four are tools built because the research needed them to exist.
- * Course projects, clones and challenge submissions are left out.
+ * Two kinds only: tools, and platforms that run for real people.
  *
- * Every claim here was read out of the repository's own README, not inferred
+ * The replication packages for the papers are deliberately not here. Every
+ * one of them is already one click away in `.rodata`, on the paper it belongs
+ * to, where it means more — code beside the claim it produced. Listing them
+ * twice would pad this section and say nothing new.
+ *
+ * The dissertation toolchain is not here either, for a different reason: it
+ * is sponsored and not public. It is the figure at the top of the page, and
+ * the policy section is it running.
+ *
+ * Every claim below was read out of the repository's own README, not inferred
  * from its name. `metric` is a number the repository itself reports.
- *
- * The dissertation toolchain — FlexSiMArch, BHPol, UICC — is not in this list
- * because it is not public. It is the figure at the top of the page, and the
- * policy section is it running.
  */
 
 export type Entry = {
@@ -30,75 +32,10 @@ export type Entry = {
   /** The checkable fact the repository itself reports. */
   metric?: { value: string; of: string };
   stack: readonly string[];
-  track: "research" | "tooling" | "platform";
+  track: "tooling" | "platform";
 };
 
 export const entries: readonly Entry[] = [
-  {
-    symbol: "Beyond-Accuracy",
-    kind: "Measurement-theoretic evaluation of LLM annotation",
-    repo: "https://github.com/sameermankotia/Beyond-Accuracy",
-    paper: "IEEE Access · accepted",
-    body: "Language models are evaluated almost entirely on accuracy — whether the output matches a gold label. Accuracy is silent on whether the same item gets the same label twice, which is the property that governs measurement error and statistical power in anything built on top of those annotations. This measures it: twelve models, a 500-item task, five repeated calls per item. Among the six most accurate models, between 9% and 37% of items come back with a different label across five identical calls.",
-    metric: { value: "ICC 0.23 – 0.95", of: "across 12 models, where accuracy spans only 0.48 – 0.85" },
-    stack: ["Python", "ICC", "Measurement theory", "12 model APIs"],
-    track: "research",
-  },
-  {
-    symbol: "Benchmarking-Agentic-AI-Generated-Code-Against-Human-Written-Code",
-    title: "Agentic vs. human code benchmark",
-    kind: "Replication package and analysis harness",
-    repo: "https://github.com/sameermankotia/Benchmarking-Agentic-AI-Generated-Code-Against-Human-Written-Code",
-    paper: "IEEE Access · under review",
-    body: "One deterministic pipeline over all 18 study subjects, rendering every table the paper quotes. Five quality dimensions — functional correctness, cyclomatic and cognitive complexity, maintainability, security density with CWE mapping, and duplication — each tested for significance against the human baseline of the same pair with Mann-Whitney U, Fisher's exact, and an exact rate test with LOC exposure. The point is that the numbers are recomputed from the frozen artifact rather than transcribed.",
-    metric: { value: "18 subjects · 5 dimensions", of: "every figure in the paper computed by one command" },
-    stack: ["Python", "pytest", "Radon", "Bandit", "pylint", "PMD"],
-    track: "research",
-  },
-  {
-    symbol: "sovereign-model-loop",
-    title: "Sovereign Model Loop",
-    kind: "Fully local GRPO fine-tuning with a health diagnostic",
-    repo: "https://github.com/sameermankotia/sovereign-model-loop",
-    paper: "ACM TIST 2026",
-    body: "Reinforcement-learning fine-tuning that no cloud provider can revoke and no rate limit can interrupt. Every edge in the feedback graph — optimizer to logger to observer to intervenor and back — is local IPC, and the whole cycle closes in under 100 ms on consumer silicon. It contributes a terminal-native observability layer, a scalar optimizer-health diagnostic, deterministic auditable reward functions, and an agentic co-observer that replaces the human in the loop without replacing the audit trail.",
-    metric: { value: "< 100 ms", of: "closed feedback cycle, entirely on-device · 70 tests passing" },
-    stack: ["Python", "GRPO", "Local inference", "Terminal observability"],
-    track: "research",
-  },
-  {
-    symbol: "Memory-mirror",
-    title: "Mirrors that Remember",
-    kind: "Measuring self-image sycophancy under persistent memory",
-    repo: "https://github.com/sameermankotia/Memory-mirror",
-    paper: "NeurIPS 2026 workshop · AI and the Self",
-    body: "A large literature shows models agree with what users believe about the world. This measures something narrower and harder to dismiss: whether storing a user's beliefs about themselves makes a model affirm those beliefs past what the evidence supports — and whether persistent memory turns a one-time affirmation into a standing one. The design holds the self-claim fixed and varies only what memory says, across four conditions rather than the usual three, so the mere presence of a memory note is controlled for separately from its content.",
-    metric: { value: "5 metrics", of: "baseline bias, memory effect, sign-tracking, presence control, evidence fidelity" },
-    stack: ["Python", "Evaluation design", "Probe sets"],
-    track: "research",
-  },
-  {
-    symbol: "MoE-Former-",
-    title: "MoE-Former++",
-    kind: "Expert routing and load balancing for sparse models",
-    repo: "https://github.com/sameermankotia/MoE-Former-",
-    paper: "ICML 2026 · under review",
-    body: "Mixture-of-Experts models waste capacity when routing collapses onto a few experts. This models token-to-expert assignment as a graph problem — a neural network over the affinity between them — rather than a per-token softmax, and pairs it with adaptive load balancing. With Bhaskar Rimal and Daniel Conte de Leon.",
-    metric: { value: "96%", of: "expert utilization through graph-guided routing" },
-    stack: ["Python", "PyTorch", "Graph neural networks", "MoE"],
-    track: "research",
-  },
-  {
-    symbol: "Fedrated_Learning",
-    title: "FedPrIDS",
-    kind: "Privacy-preserving federated intrusion detection",
-    repo: "https://github.com/sameermankotia/Fedrated_Learning",
-    paper: "Journal of Cybersecurity and Privacy · published",
-    body: "Lets organisations that cannot pool their network traffic still train a shared intrusion-detection model on it, with configurable differential privacy and aggregation weighted by data quality rather than volume. Evaluated across three standard intrusion datasets so the result is not an artifact of one capture.",
-    metric: { value: "3 datasets", of: "CICIDS2017, UNSW-NB15 and Bot-IoT, under differential privacy" },
-    stack: ["Python", "Federated learning", "Differential privacy"],
-    track: "research",
-  },
   {
     symbol: "Flakegate",
     kind: "A reliability gate for LLM calls in CI",
@@ -149,11 +86,6 @@ export const entries: readonly Entry[] = [
 
 /** Section headings for the three tracks, in display order. */
 export const tracks = [
-  {
-    id: "research",
-    label: "Research · replication packages",
-    note: "Each of these is the code behind a paper. The numbers the papers quote are recomputed from the repository, not transcribed into it.",
-  },
   {
     id: "tooling",
     label: "Tooling · research made usable",

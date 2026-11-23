@@ -17,15 +17,20 @@ import { entries, tracks } from "@/data/work";
 <section id="data" data-section=".data" class="scroll-mt-24 pt-24 sm:pt-32">
   <div class="sect-head">
     <h2 class="t-headline shrink-0">.data</h2>
-    <p class="t-label text-muted">Public repositories</p>
-    <p class="t-ident ml-auto text-muted">{entries.length} of 45 selected</p>
+    <p class="t-label text-muted">Things I have built</p>
+    <p class="t-ident ml-auto text-muted">{entries.length} repositories</p>
   </div>
 
   <p class="t-body measure mt-6 text-muted">
-    Selected from the account by one test: does it carry a result someone could
-    check. The dissertation toolchain is not among them &mdash; that work is
-    sponsored and its source is not public, which is why it is the figure at
-    the top of this page and the policy section is it running.
+    Tools, and platforms that run for real people. The code behind each paper
+    sits with the paper itself in
+    <a
+      href="#rodata"
+      class="text-ink underline decoration-rule-strong underline-offset-4 transition-colors hover:text-allow"
+      >.rodata</a
+    >, rather than being listed twice. The dissertation toolchain is not here
+    at all &mdash; that work is sponsored and its source is not public, which
+    is why it is the figure at the top of this page.
   </p>
 
   {
@@ -127,7 +132,7 @@ import { entries, tracks } from "@/data/work";
       target="_blank"
       rel="noopener noreferrer"
       class="underline decoration-rule-strong underline-offset-4 transition-colors hover:text-allow"
-      >All 45 repositories on GitHub</a
+      >Everything else on GitHub</a
     >
   </p>
 </section>
